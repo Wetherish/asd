@@ -1,0 +1,103 @@
+/*
+ * Global base styles. Tokens only — no local colours, sizes, or shadows.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  color: var(--text-primary);
+  background: var(--canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* High-contrast mode: strengthen edges, drop tints (04 §12) */
+@media (prefers-contrast: more) {
+  :root {
+    --border: var(--border-strong);
+  }
+}
+
+/* Focus visibility: never remove the outline (07 §5) */
+:focus-visible {
+  outline: var(--radius-focus) solid var(--accent);
+  outline-offset: var(--radius-focus);
+}
+
+button {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+input,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* Scrollbars — overlay, auto-hide (04 §10) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: var(--radius-pill);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Reduced motion: every transition becomes a 120ms cross-fade or nothing (01 §6, 07 §7) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 120ms !important;
+    animation-duration: 120ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,134 @@
+.activity {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.activity-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--pane-padding) var(--space-3);
+}
+
+.activity-title {
+  margin: 0;
+  font-size: var(--fs-page);
+  line-height: var(--lh-page);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.activity-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.activity-search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  color: var(--text-tertiary);
+  cursor: text;
+  overflow: hidden;
+  transition: width var(--dur-2) var(--ease), border-color var(--dur-1) var(--ease);
+}
+
+.activity-search.open {
+  width: 240px;
+}
+
+.activity-search:focus-within {
+  border-color: var(--border-strong);
+  color: var(--text-secondary);
+}
+
+.activity-search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.activity-search input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* Toolbar: chips + (desktop) service filter */
+.activity-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--pane-padding) var(--space-3);
+}
+
+.activity-spacer {
+  flex: 1;
+}
+
+.activity-service {
+  height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text-primary);
+  font-size: var(--fs-small);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.activity-service:focus-visible {
+  outline: var(--radius-focus) solid var(--accent);
+  outline-offset: var(--radius-focus);
+}
+
+.activity-clear {
+  font-size: var(--fs-small);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.activity-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 var(--pane-padding) var(--space-8);
+}
+
+.activity-empty {
+  display: flex;
+  min-height: 60%;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Phone timeline ---- */
+.activity-day {
+  padding-top: var(--space-4);
+}
+
+.activity-day .log:last-child .log__rail::after {
+  display: none;
+}
+
+.activity-daylabel {
+  margin: 0 0 var(--space-2);
+  font-size: var(--fs-section);
+  line-height: var(--lh-section);
+  font-weight: 600;
+  color: var(--text-primary);
+}

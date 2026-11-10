@@ -1,0 +1,251 @@
+/*
+ * Desktop activity table (04 §5): columns Time·Action·Tool·Status·Result,
+ * sticky header, sticky day dividers, hover/focus row actions, density.
+ */
+.logtable {
+  width: 100%;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+}
+
+.logtable__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* ---- Sticky header ---- */
+.logtable__head th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  height: 36px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 0 var(--space-3);
+  white-space: nowrap;
+}
+
+/* ---- Column widths (04 §5) ---- */
+.logtable__th--time {
+  width: 80px;
+}
+.logtable__th--tool {
+  width: 140px;
+}
+.logtable__th--status {
+  width: 130px;
+}
+.logtable__th--result {
+  width: 200px;
+}
+.logtable__th--actions {
+  width: 100%;
+}
+
+/* ---- Day divider (sticky) ---- */
+.logtable__day td {
+  position: sticky;
+  top: 36px;
+  z-index: 2;
+  height: 32px;
+  padding: 0 var(--space-3);
+  background: var(--canvas);
+  border-top: 1px solid var(--border);
+  font-size: var(--fs-micro);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  vertical-align: middle;
+}
+
+/* ---- Data rows ---- */
+.logtable__row {
+  cursor: pointer;
+}
+
+.logtable__row td {
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.logtable__row--dense td {
+  height: 32px;
+}
+
+.logtable__row:hover {
+  background: var(--surface);
+}
+
+.logtable__row--failed {
+  background: var(--danger-tint);
+}
+.logtable__row--failed:hover {
+  background: var(--danger-tint);
+}
+
+.logtable__cell--time {
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.logtable__cell--action {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+}
+
+.logtable__cell--tool {
+  color: var(--text-tertiary);
+}
+
+.logtable__cell--status {
+  white-space: nowrap;
+}
+
+.logtable__dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  margin-right: var(--space-2);
+  vertical-align: middle;
+}
+.logtable__dot--done {
+  background: var(--success);
+}
+.logtable__dot--failed {
+  background: var(--danger);
+}
+.logtable__dot--running {
+  background: transparent;
+  border: 1px solid var(--border-strong);
+}
+.logtable__dot--blocked {
+  background: var(--warning);
+}
+.logtable__dot--rejected {
+  background: var(--text-tertiary);
+}
+
+.logtable__status {
+  font-weight: 500;
+  vertical-align: middle;
+}
+.logtable__status--success {
+  color: var(--success);
+}
+.logtable__status--warning {
+  color: var(--warning);
+}
+.logtable__status--danger {
+  color: var(--danger);
+}
+.logtable__status--neutral,
+.logtable__status--running {
+  color: var(--text-tertiary);
+}
+
+.logtable__cell--result {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+}
+.logtable__row--failed .logtable__cell--result {
+  color: var(--danger);
+}
+
+/* ---- Row actions (reveal on hover + focus) ---- */
+.logtable__cell--actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.logtable__actions {
+  display: inline-flex;
+  gap: var(--space-1);
+  opacity: 0;
+  transition: opacity var(--dur-1) var(--ease);
+}
+
+.logtable__row:hover .logtable__actions,
+.logtable__row:focus-within .logtable__actions {
+  opacity: 1;
+}
+
+.logtable__action {
+  height: 24px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-micro);
+  font-weight: 500;
+  color: var(--accent);
+}
+
+.logtable__action:hover {
+  background: var(--accent-tint);
+}
+
+/* ---- Detail (expanded) ---- */
+.logtable__detail-row td {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-sunken);
+}
+
+.logtable__detail {
+  display: flex;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--space-3) var(--space-3) var(--space-4);
+}
+
+.logtable__detail-item {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.logtable__detail-key {
+  color: var(--text-tertiary);
+  font-size: var(--fs-micro);
+}
+
+.logtable__detail-value {
+  color: var(--text-secondary);
+  font-size: var(--fs-micro);
+}
+
+/* ---- Density toggle ---- */
+.density-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-secondary);
+}
+
+.density-toggle:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.density-toggle[aria-pressed='true'] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}

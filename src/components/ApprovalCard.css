@@ -1,0 +1,233 @@
+/*
+ * Approval card — the core of the product (02 §6).
+ * Open states render a bordered card; collapsed states render a one-line row.
+ */
+
+/* ---- card chrome (open + proposed) ---- */
+.approval {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-raised);
+}
+
+.approval--failed {
+  background: var(--danger-tint);
+}
+
+/* ---- header ---- */
+.approval__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.approval__glyph {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+.approval__glyph--danger {
+  color: var(--danger);
+}
+
+.approval__title {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-headline);
+  line-height: var(--lh-headline);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ---- preview (label column 72px) ---- */
+.approval__preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.approval__row {
+  display: grid;
+  grid-template-columns: calc(var(--space-12) + var(--space-6)) 1fr; /* 72px */
+  gap: var(--space-3);
+  align-items: baseline;
+}
+
+.approval__label {
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-tertiary);
+}
+
+.approval__value {
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.approval__input {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  min-width: 0;
+}
+
+/* ---- consequence / cause / long line ---- */
+.approval__consequence {
+  margin: 0;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-tertiary);
+}
+.approval__consequence--danger {
+  color: var(--danger);
+}
+
+.approval__cause {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--danger);
+}
+
+.approval__long {
+  margin: 0;
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-tertiary);
+}
+
+/* ---- actions ---- */
+.approval__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+/* ---- collapsed one-line states ---- */
+.approval-line {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: calc(var(--lh-headline) + var(--space-6)); /* 44px */
+  animation: approval-line-in var(--dur-2) var(--ease);
+}
+
+.approval-line__text {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-small);
+  line-height: var(--lh-small);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.approval-line__done,
+.approval-line__warning,
+.approval-line__muted {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.approval-line__done {
+  color: var(--success);
+}
+.approval-line__warning {
+  color: var(--warning);
+}
+.approval-line__muted {
+  color: var(--text-tertiary);
+}
+
+/* rejected: 60% opacity, no tint (the "Ask again" button stays full-strength) */
+.approval-line--muted .approval-line__text,
+.approval-line--muted .approval-line__muted {
+  opacity: 0.6;
+}
+
+@keyframes approval-line-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- proposed skeleton ---- */
+.approval--proposed {
+  gap: var(--space-3);
+}
+
+.approval__skeleton-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.approval__skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.approval__skeleton {
+  display: block;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  animation: approval-skeleton var(--dur-2) var(--ease) infinite alternate;
+}
+
+.approval__skeleton--glyph {
+  width: var(--lh-headline); /* 20px */
+  height: var(--lh-headline);
+  border-radius: var(--radius-pill);
+}
+
+.approval__skeleton--title {
+  width: 40%;
+  height: var(--lh-headline);
+}
+
+.approval__skeleton--label {
+  width: var(--space-12); /* 48px */
+  height: var(--lh-micro);
+}
+
+.approval__skeleton--value {
+  flex: 1;
+  height: var(--lh-micro);
+}
+
+.approval__preparing {
+  font-size: var(--fs-micro);
+  line-height: var(--lh-micro);
+  color: var(--text-tertiary);
+}
+
+@keyframes approval-skeleton {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}

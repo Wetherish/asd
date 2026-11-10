@@ -1,0 +1,112 @@
+/*
+ * Design tokens — source of truth from docs/01-foundations.md.
+ * Do not invent new tokens. Anything not listed here is a bug.
+ */
+:root {
+  /* ---- Accent (one only) ---- */
+  --accent: #2E5BD7;
+  --accent-pressed: #244BBB;
+  --accent-tint: #EAF0FF;
+  --accent-on: #FFFFFF;
+
+  /* ---- Neutrals (light) ---- */
+  --canvas: #FFFFFF;
+  --surface: #F7F8FA;
+  --surface-raised: #FFFFFF;
+  --surface-sunken: #EFF1F5;
+  --border: #DFE3EA;
+  --border-strong: #7C8698;
+  --text-tertiary: #6B7380;
+  --text-secondary: #4A515C;
+  --text-primary: #1B1F26;
+  --text-inverse: #FFFFFF;
+
+  /* ---- Semantic (state only) ---- */
+  --success: #1B7F4B;
+  --warning: #8A5A00;
+  --danger: #B3261E;
+  --success-tint: rgba(27, 127, 75, 0.10);
+  --warning-tint: rgba(138, 90, 0, 0.10);
+  --danger-tint: rgba(179, 38, 30, 0.10);
+
+  /* ---- Scrim + elevation ---- */
+  --scrim: rgba(14, 15, 18, 0.40);
+  --shadow-1: 0 1px 3px rgba(14, 15, 18, 0.08);
+  --shadow-2: 0 8px 24px rgba(14, 15, 18, 0.16);
+  --shadow-3: 0 16px 48px rgba(14, 15, 18, 0.24);
+
+  /* ---- Spacing (4pt base) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+
+  /* ---- Shape ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* ---- Motion ---- */
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* ---- Type (desktop scale, 01 §2.3) ---- */
+  --font-sans: -apple-system, "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", "Cascadia Mono", ui-monospace, monospace;
+
+  --fs-page: 28px;
+  --fs-section: 20px;
+  --fs-headline: 15px;
+  --fs-body: 15px;
+  --fs-small: 13px;
+  --fs-micro: 12px;
+
+  --lh-page: 34px;
+  --lh-section: 26px;
+  --lh-headline: 20px;
+  --lh-body: 22px;
+  --lh-small: 18px;
+  --lh-micro: 16px;
+
+  /* ---- Layout ---- */
+  --sidebar-width: 260px;
+  --panel-width: 360px;
+  --pane-padding: 24px;
+  --chat-max: 720px;
+  --radius-focus: 2px;
+}
+
+[data-theme='dark'] {
+  --accent: #7A9BFF;
+  --accent-pressed: #92AEFF;
+  --accent-tint: #1B2440;
+  --accent-on: #0E0F12;
+
+  --canvas: #0E0F12;
+  --surface: #16181D;
+  --surface-raised: #1D2027;
+  --surface-sunken: #0A0B0E;
+  --border: #2A2E37;
+  --border-strong: #5C6675;
+  --text-tertiary: #9BA3B0;
+  --text-secondary: #C3C9D4;
+  --text-primary: #F2F4F8;
+  --text-inverse: #0E0F12;
+
+  --success: #5FD08A;
+  --warning: #E9B949;
+  --danger: #FF8A80;
+  --success-tint: rgba(95, 208, 138, 0.10);
+  --warning-tint: rgba(233, 185, 73, 0.10);
+  --danger-tint: rgba(255, 138, 128, 0.10);
+
+  --scrim: rgba(14, 15, 18, 0.60);
+  --shadow-1: none;
+  --shadow-2: none;
+  --shadow-3: none;
+}
