@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Display type — fashion magazine (Studio)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,600;1,600&family=Jost:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;1,300&family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,500;1,500&family=Tenor+Sans&display=swap" rel="stylesheet" />
+<style>
+  :root { --page-bg: #141310; --page-text: #ecece6; --page-dim: #9a968c; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page-bg); color: var(--page-text);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; padding: 40px 28px 80px;
+  }
+  h1 { font-size: 26px; margin: 0 0 6px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--page-dim); font-size: 14px; margin: 0 0 32px; max-width: 860px; line-height: 1.5; }
+
+  #board { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; align-items: start; }
+
+  .variant { border-radius: 18px; padding: 26px; background: #fcfbf8; color: #1c1a17; border: 1px solid #dcd8cc; }
+  .variant h2 { font-size: 15px; margin: 0 0 4px; font-weight: 600; }
+  .variant .note { font-size: 12px; color: #9a9488; margin: 0 0 20px; }
+
+  .masthead { padding-bottom: 18px; }
+  .overline { text-transform: uppercase; letter-spacing: 0.24em; font-size: 11px; color: #9a9488; font-weight: 500; }
+  .headline { font-size: 40px; line-height: 1.05; margin-top: 6px; letter-spacing: -0.01em; }
+  .rule { border: 0; border-top: 1px solid #dcd8cc; margin: 16px 0 12px; }
+  .caption { font-size: 12px; color: #6b675e; letter-spacing: 0.02em; }
+
+  .phone {
+    width: 280px; margin: 6px 0 0; border-radius: 34px;
+    background: #fcfbf8; color: #1c1a17;
+    border: 1px solid #dcd8cc; box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    padding: 14px 14px 16px;
+  }
+  .statusbar { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #6b675e; padding: 0 4px 12px; font-weight: 600; }
+  .sig { display: inline-flex; gap: 2px; align-items: flex-end; height: 10px; }
+  .sig i { width: 3px; background: #6b675e; border-radius: 1px; }
+  .sig i:nth-child(1){height:4px} .sig i:nth-child(2){height:7px} .sig i:nth-child(3){height:10px}
+  .greet-overline { text-transform: uppercase; letter-spacing: 0.22em; font-size: 10px; color: #9a9488; font-weight: 500; }
+  .greet-name { font-size: 32px; line-height: 1.05; margin-top: 3px; letter-spacing: -0.01em; }
+  .talk { margin: 14px 0 4px; background: #0F766E; color: #fff; border-radius: 14px; padding: 13px; font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 7px; }
+  .talk svg { width: 16px; height: 16px; }
+  .lbl { text-transform: uppercase; letter-spacing: 0.2em; font-size: 10px; color: #9a9488; font-weight: 500; margin: 16px 0 8px; }
+  .row { background: #f4f2ec; border: 1px solid #dcd8cc; border-radius: 12px; padding: 11px 12px; margin-top: 8px; display: flex; align-items: center; gap: 10px; }
+  .row .grow { flex: 1; min-width: 0; }
+  .row .ttl { font-size: 15px; letter-spacing: -0.01em; }
+  .row .meta { font-size: 11px; color: #9a9488; letter-spacing: 0.02em; }
+  .pill { font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 999px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .pill-warn { background: rgba(178,106,0,0.14); color: #b26a00; }
+  .pill-ok { background: rgba(31,122,77,0.14); color: #1f7a4d; }
+  .tabbar { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 12px; border-top: 1px solid #dcd8cc; font-size: 10px; color: #6b675e; text-transform: uppercase; letter-spacing: 0.14em; }
+  .tabbar .on { color: #0F766E; font-weight: 600; }
+</style>
+</head>
+<body>
+  <h1>Display type — fashion magazine (Studio palette)</h1>
+  <p class="sub">Three complete fashion systems — high-contrast Didone display, tracked uppercase labels, hairline rules — applied to the Home screen. Pick the system, or mix a display serif with a different label sans.</p>
+
+  <div id="board"></div>
+
+  <script>
+    const MIC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>';
+
+    const systems = [
+      { name: 'System A — Bodoni Moda + Jost', note: 'The Vogue pairing: high-contrast Didone with a geometric grotesque.',
+        disp: '"Bodoni Moda", Didot, Georgia, serif', dItal: 600, dReg: 600,
+        label: '"Jost", Futura, "Century Gothic", sans-serif' },
+      { name: 'System B — Cormorant + Montserrat', note: 'Light, ethereal Garamond with a clean thin sans. Airy, couture.',
+        disp: '"Cormorant Garamond", Georgia, serif', dItal: 300, dReg: 400,
+        label: '"Montserrat", "Helvetica Neue", Arial, sans-serif' },
+      { name: 'System C — Playfair + Tenor Sans', note: 'Confident Didone with Tenor Sans, built to pair with display serifs.',
+        disp: '"Playfair Display", Georgia, serif', dItal: 500, dReg: 500,
+        label: '"Tenor Sans", "Helvetica Neue", Arial, sans-serif' },
+    ];
+
+    const board = document.getElementById('board');
+
+    for (const s of systems) {
+      const dispI = 'font-family:' + s.disp + ';font-weight:' + s.dItal + ';font-style:italic;';
+      const dispP = 'font-family:' + s.disp + ';font-weight:' + s.dReg + ';';
+      const lbl   = 'font-family:' + s.label + ';';
+
+      const el = document.createElement('section');
+      el.className = 'variant';
+      el.innerHTML =
+        '<h2>' + s.name + '</h2>' +
+        '<p class="note">' + s.note + '</p>' +
+
+        '<div class="masthead">' +
+          '<div class="overline" style="' + lbl + '">The Agent</div>' +
+          '<div class="headline" style="' + dispI + '">Good morning, Alex</div>' +
+          '<hr class="rule" />' +
+          '<div class="caption" style="' + lbl + '">3 sessions &middot; 1 job running</div>' +
+        '</div>' +
+
+        '<div class="phone">' +
+          '<div class="statusbar"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>' +
+          '<div class="greet-overline" style="' + lbl + '">Good morning</div>' +
+          '<div class="greet-name" style="' + dispI + '">Alex</div>' +
+          '<div class="talk">' + MIC + 'Talk</div>' +
+          '<div class="lbl" style="' + lbl + '">Recent</div>' +
+          '<div class="row"><div class="grow"><div class="ttl" style="' + dispP + '">Vacuum research</div><div class="meta" style="' + lbl + '">2 agents · 4 artifacts</div></div><span class="pill pill-warn">Running</span></div>' +
+          '<div class="row"><div class="grow"><div class="ttl" style="' + dispP + '">Project design</div><div class="meta" style="' + lbl + '">Shared · 3 people</div></div><span class="pill pill-ok">Done</span></div>' +
+          '<div class="tabbar" style="' + lbl + '"><span class="on">Home</span><span>Sessions</span><span>Agents</span><span>Jobs</span></div>' +
+        '</div>';
+
+      board.appendChild(el);
+    }
+  </script>
+</body>
+</html>

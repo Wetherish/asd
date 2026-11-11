@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Home screen — Studio / System B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,300&family=Montserrat:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root { --page-bg: #141310; --page-text: #ecece6; --page-dim: #9a968c; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page-bg); color: var(--page-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; padding: 40px 28px 80px;
+  }
+  h1 { font-size: 26px; margin: 0 0 6px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--page-dim); font-size: 14px; margin: 0 0 32px; max-width: 780px; line-height: 1.5; }
+
+  .wrap { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+
+  .serif { font-family: "Cormorant Garamond", Georgia, serif; }
+  .sans { font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif; }
+
+  .phone {
+    width: 375px; border-radius: 44px; padding: 18px 20px 20px;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.4); overflow: hidden;
+  }
+  .light { background: #FCFBF8; color: #1C1A17; border: 1px solid #DCD8CC; }
+  .dark  { background: #141210; color: #EDE9E2; border: 1px solid #34302A; }
+
+  .light { --paper:#FCFBF8; --surface:#F4F2EC; --surface2:#EAE7DE; --border:#DCD8CC; --text:#1C1A17; --text2:#6B675E; --text3:#9A9488; --accent:#0F766E; --accent-text:#0F766E; --success:#1F7A4D; --warning:#B26A00; --danger:#C0392B; }
+  .dark  { --paper:#141210; --surface:#1E1B17; --surface2:#26221D; --border:#34302A; --text:#EDE9E2; --text2:#B5AEA0; --text3:#857E72; --accent:#0F766E; --accent-text:#4FD1C5; --success:#4CAF7D; --warning:#E0A13B; --danger:#E05A4E; }
+
+  .statusbar { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text2); padding: 0 4px 8px; font-weight: 600; }
+  .sig { display: inline-flex; gap: 3px; align-items: flex-end; height: 12px; }
+  .sig i { width: 4px; background: var(--text2); border-radius: 1px; }
+  .sig i:nth-child(1){height:5px} .sig i:nth-child(2){height:8px} .sig i:nth-child(3){height:12px}
+
+  .overline { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.24em; font-size:11px; color:var(--text3); }
+  .hero { font-family:"Cormorant Garamond",Georgia,serif; font-weight:300; font-style:italic; font-size:44px; line-height:1; margin-top:4px; letter-spacing:-0.01em; }
+
+  .talk { margin:18px 0 2px; background:var(--accent); color:#fff; border-radius:14px; padding:15px; font-size:13px; font-weight:500; letter-spacing:0.16em; display:flex; align-items:center; justify-content:center; gap:8px; font-family:"Montserrat",sans-serif; }
+  .talk svg { width:17px; height:17px; }
+
+  .section { margin-top:20px; }
+  .label { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.2em; font-size:10px; color:var(--text3); margin-bottom:8px; }
+
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:13px 14px; margin-top:8px; }
+  .row { display:flex; align-items:center; gap:12px; }
+  .row .grow { flex:1; min-width:0; }
+  .title { font-family:"Cormorant Garamond",Georgia,serif; font-weight:400; font-size:18px; line-height:1.15; }
+  .meta { font-family:"Montserrat",sans-serif; font-size:11px; color:var(--text3); letter-spacing:0.02em; margin-top:2px; }
+  .time { font-family:"Montserrat",sans-serif; font-size:11px; color:var(--text3); }
+
+  .actions { display:flex; gap:8px; margin-top:12px; }
+  .btn { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.14em; font-size:11px; padding:9px 16px; border-radius:11px; border:1px solid transparent; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
+
+  .pill { font-family:"Montserrat",sans-serif; font-weight:500; font-size:9px; text-transform:uppercase; letter-spacing:0.12em; padding:4px 9px; border-radius:999px; white-space:nowrap; }
+  .pill-warn { background:color-mix(in srgb, var(--warning) 15%, transparent); color:var(--warning); }
+  .pill-ok { background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); }
+
+  .tabbar { display:flex; justify-content:space-between; margin-top:22px; padding-top:14px; border-top:1px solid var(--border); font-family:"Montserrat",sans-serif; font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:0.14em; color:var(--text2); }
+  .tabbar .on { color:var(--accent-text); }
+</style>
+</head>
+<body>
+  <h1>Home screen — first pass</h1>
+  <p class="sub">The Home hub in the locked direction (Studio / System B). Greeting + Talk, then what needs you (approvals), recent sessions, and running jobs. Light and dark side by side. This is a first pass for your sign-off.</p>
+
+  <div class="wrap">
+    <!-- LIGHT -->
+    <div class="phone light">
+      <div class="statusbar"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>
+      <div class="overline">Good morning</div>
+      <div class="hero">Alex</div>
+      <div class="talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>Talk</div>
+
+      <div class="section">
+        <div class="label">Needs you</div>
+        <div class="card">
+          <div class="title">Send message to Priya</div>
+          <div class="meta">Email &middot; ready to send</div>
+          <div class="actions">
+            <span class="btn btn-primary">Approve</span>
+            <span class="btn btn-ghost">Review</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Recent</div>
+        <div class="card row"><div class="grow"><div class="title">Vacuum research</div><div class="meta">2 agents &middot; 4 artifacts</div></div><span class="time">2m</span></div>
+        <div class="card row"><div class="grow"><div class="title">Project design</div><div class="meta">Shared &middot; 3 people</div></div><span class="time">1h</span></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Jobs</div>
+        <div class="card row"><div class="grow"><div class="title">Build dashboard</div><div class="meta">requirements &rarr; deploy</div></div><span class="pill pill-warn">Running</span></div>
+        <div class="card row"><div class="grow"><div class="title">Weekly summary</div><div class="meta">email drafted</div></div><span class="pill pill-ok">Done</span></div>
+      </div>
+
+      <div class="tabbar"><span class="on">Home</span><span>Sessions</span><span>Agents</span><span>Jobs</span></div>
+    </div>
+
+    <!-- DARK -->
+    <div class="phone dark">
+      <div class="statusbar"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>
+      <div class="overline">Good morning</div>
+      <div class="hero">Alex</div>
+      <div class="talk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>Talk</div>
+
+      <div class="section">
+        <div class="label">Needs you</div>
+        <div class="card">
+          <div class="title">Send message to Priya</div>
+          <div class="meta">Email &middot; ready to send</div>
+          <div class="actions">
+            <span class="btn btn-primary">Approve</span>
+            <span class="btn btn-ghost">Review</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="label">Recent</div>
+        <div class="card row"><div class="grow"><div class="title">Vacuum research</div><div class="meta">2 agents &middot; 4 artifacts</div></div><span class="time">2m</span></div>
+        <div class="card row"><div class="grow"><div class="title">Project design</div><div class="meta">Shared &middot; 3 people</div></div><span class="time">1h</span></div>
+      </div>
+
+      <div class="section">
+        <div class="label">Jobs</div>
+        <div class="card row"><div class="grow"><div class="title">Build dashboard</div><div class="meta">requirements &rarr; deploy</div></div><span class="pill pill-warn">Running</span></div>
+        <div class="card row"><div class="grow"><div class="title">Weekly summary</div><div class="meta">email drafted</div></div><span class="pill pill-ok">Done</span></div>
+      </div>
+
+      <div class="tabbar"><span class="on">Home</span><span>Sessions</span><span>Agents</span><span>Jobs</span></div>
+    </div>
+  </div>
+</body>
+</html>

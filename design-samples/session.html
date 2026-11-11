@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Session detail — Studio / System B</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,300&family=Montserrat:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root { --page-bg: #141310; --page-text: #ecece6; --page-dim: #9a968c; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--page-bg); color: var(--page-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased; padding: 40px 28px 80px;
+  }
+  h1 { font-size: 26px; margin: 0 0 6px; font-weight: 700; letter-spacing: -0.02em; }
+  .sub { color: var(--page-dim); font-size: 14px; margin: 0 0 32px; max-width: 820px; line-height: 1.5; }
+
+  .wrap { display: flex; gap: 32px; flex-wrap: wrap; align-items: flex-start; }
+
+  .phone {
+    width: 375px; border-radius: 44px; padding: 0; overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.4); display: flex; flex-direction: column;
+  }
+  .light { background:#FCFBF8; color:#1C1A17; border:1px solid #DCD8CC; }
+  .dark  { background:#141210; color:#EDE9E2; border:1px solid #34302A; }
+
+  .light { --paper:#FCFBF8; --surface:#F4F2EC; --surface2:#EAE7DE; --border:#DCD8CC; --text:#1C1A17; --text2:#6B675E; --text3:#9A9488; --accent:#0F766E; --accent-text:#0F766E; --tint:#E6F2F0; --success:#1F7A4D; --warning:#B26A00; --danger:#C0392B; }
+  .dark  { --paper:#141210; --surface:#1E1B17; --surface2:#26221D; --border:#34302A; --text:#EDE9E2; --text2:#B5AEA0; --text3:#857E72; --accent:#0F766E; --accent-text:#4FD1C5; --tint:#12312E; --success:#4CAF7D; --warning:#E0A13B; --danger:#E05A4E; }
+
+  .sans { font-family:"Montserrat","Helvetica Neue",Arial,sans-serif; }
+  .bodyfont { font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif; }
+
+  .statusbar { display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--text2); padding:14px 20px 6px; font-weight:600; }
+  .sig { display:inline-flex; gap:3px; align-items:flex-end; height:11px; }
+  .sig i { width:4px; background:var(--text2); border-radius:1px; }
+  .sig i:nth-child(1){height:5px} .sig i:nth-child(2){height:8px} .sig i:nth-child(3){height:11px}
+
+  .nav { display:flex; align-items:center; gap:12px; padding:6px 16px 12px; border-bottom:1px solid var(--border); }
+  .iconbtn { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; color:var(--text2); }
+  .iconbtn svg { width:20px; height:20px; }
+  .nav-center { flex:1; text-align:center; }
+  .nav-over { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.2em; font-size:9px; color:var(--text3); }
+  .nav-title { font-family:"Cormorant Garamond",Georgia,serif; font-weight:400; font-size:19px; line-height:1.1; margin-top:1px; }
+  .nav-right { display:flex; gap:2px; }
+
+  .chat { padding:14px 20px 8px; display:flex; flex-direction:column; gap:4px; }
+
+  .divider { text-align:center; font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.22em; font-size:9px; color:var(--text3); margin:6px 0 12px; }
+
+  .agent-msg { margin-top:12px; }
+  .msg-over { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.2em; font-size:9px; color:var(--text3); margin-bottom:4px; }
+  .msg-body { font-size:15px; line-height:1.5; color:var(--text); }
+
+  .trace { margin-top:14px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:12px; padding:12px 14px; }
+  .trace-head { display:flex; align-items:center; gap:10px; }
+  .trace .grow { flex:1; }
+  .trace-over { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.18em; font-size:9px; color:var(--accent-text); }
+  .trace-title { font-size:14px; font-weight:600; color:var(--text); margin-top:2px; }
+  .trace-meta { font-family:"Montserrat",sans-serif; font-size:11px; color:var(--text3); margin-top:2px; letter-spacing:0.02em; }
+  .chev { color:var(--text3); }
+  .chev svg { width:16px; height:16px; }
+
+  .artifact { margin-top:14px; background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; }
+  .art-over { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.2em; font-size:9px; color:var(--text3); }
+  .art-title { font-family:"Cormorant Garamond",Georgia,serif; font-weight:400; font-size:20px; margin-top:3px; }
+  .art-item { display:flex; justify-content:space-between; align-items:baseline; padding:9px 0; border-top:1px solid var(--border); margin-top:10px; }
+  .art-item .name { font-size:14px; font-weight:600; }
+  .art-item .sub { font-family:"Montserrat",sans-serif; font-size:11px; color:var(--text3); }
+  .art-item .price { font-family:"Montserrat",sans-serif; font-size:13px; color:var(--text2); }
+
+  .user-msg { display:flex; justify-content:flex-end; margin-top:14px; }
+  .bubble { background:var(--tint); color:var(--text); border-radius:18px 18px 4px 18px; padding:10px 14px; max-width:78%; font-size:15px; line-height:1.45; }
+
+  .approval { margin-top:14px; background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent); border-radius:14px; padding:14px; }
+  .app-title { font-family:"Cormorant Garamond",Georgia,serif; font-weight:400; font-size:19px; }
+  .app-meta { font-family:"Montserrat",sans-serif; font-size:11px; color:var(--text3); margin-top:3px; letter-spacing:0.02em; }
+  .actions { display:flex; gap:8px; margin-top:12px; }
+  .btn { font-family:"Montserrat",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:0.12em; font-size:11px; padding:9px 15px; border-radius:11px; border:1px solid transparent; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-ghost { background:var(--surface2); color:var(--text); border-color:var(--border); }
+  .btn-danger { background:transparent; color:var(--danger); border-color:var(--danger); }
+
+  .composer { display:flex; align-items:center; gap:10px; padding:12px 16px 18px; border-top:1px solid var(--border); margin-top:16px; }
+  .input { flex:1; background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:11px 16px; font-size:15px; color:var(--text3); }
+  .cicon { width:36px; height:36px; border-radius:999px; display:flex; align-items:center; justify-content:center; color:var(--text2); }
+  .cicon.send { background:var(--accent); color:#fff; }
+  .cicon svg { width:19px; height:19px; }
+</style>
+</head>
+<body>
+  <h1>Session detail — first pass</h1>
+  <p class="sub">The chat/workspace: lead-agent prose, a collapsible sub-agent trace, an artifact, a user reply, and an inline approval. Body is SF Pro; overlines/labels Montserrat; titles Cormorant. Light + dark.</p>
+
+  <div class="wrap">
+    <!-- LIGHT -->
+    <div class="phone light">
+      <div class="statusbar"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>
+      <div class="nav">
+        <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="nav-center"><div class="nav-over">Researcher</div><div class="nav-title">Vacuum research</div></div>
+        <div class="nav-right">
+          <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M6 7l6-6 6 6"/><path d="M20 14v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5"/></svg></div>
+          <div class="iconbtn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></div>
+        </div>
+      </div>
+
+      <div class="chat">
+        <div class="divider">Today</div>
+
+        <div class="agent-msg">
+          <div class="msg-over">Researcher</div>
+          <div class="msg-body bodyfont">I found three robot vacuums in your budget. I&rsquo;ve asked the Builder to pull live prices and specs before we shortlist.</div>
+        </div>
+
+        <div class="trace">
+          <div class="trace-head">
+            <div class="grow">
+              <div class="trace-over">Builder &middot; working</div>
+              <div class="trace-title bodyfont">Gathering live prices &amp; specs</div>
+              <div class="trace-meta">2 of 3 &middot; started 1m ago</div>
+            </div>
+            <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </div>
+        </div>
+
+        <div class="artifact">
+          <div class="art-over">Artifact</div>
+          <div class="art-title">Shortlist</div>
+          <div class="art-item"><div><div class="name bodyfont">Shark RV1000</div><div class="sub">2-yr warranty &middot; 60 min</div></div><div class="price">&pound;429</div></div>
+          <div class="art-item"><div><div class="name bodyfont">Roomba i5</div><div class="sub">1-yr warranty &middot; 75 min</div></div><div class="price">&pound;399</div></div>
+          <div class="art-item"><div><div class="name bodyfont">Eufy X10</div><div class="sub">2-yr warranty &middot; 90 min</div></div><div class="price">&pound;459</div></div>
+        </div>
+
+        <div class="user-msg"><div class="bubble bodyfont">Can you check the warranty and returns policy too?</div></div>
+
+        <div class="agent-msg">
+          <div class="msg-over">Researcher</div>
+          <div class="msg-body bodyfont">Done &mdash; two offer a 2-year warranty. Here&rsquo;s my recommendation.</div>
+        </div>
+
+        <div class="approval">
+          <div class="app-title">Order the Shark RV1000?</div>
+          <div class="app-meta">&pound;429 &middot; delivers Thursday</div>
+          <div class="actions">
+            <span class="btn btn-primary">Approve</span>
+            <span class="btn btn-ghost">Edit</span>
+            <span class="btn btn-danger">Reject</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="cicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></div>
+        <div class="input bodyfont">Message&hellip;</div>
+        <div class="cicon send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2"/></svg></div>
+      </div>
+    </div>
+
+    <!-- DARK -->
+    <div class="phone dark">
+      <div class="statusbar"><span>9:41</span><span class="sig"><i></i><i></i><i></i></span></div>
+      <div class="nav">
+        <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="nav-center"><div class="nav-over">Researcher</div><div class="nav-title">Vacuum research</div></div>
+        <div class="nav-right">
+          <div class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="M6 7l6-6 6 6"/><path d="M20 14v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-5"/></svg></div>
+          <div class="iconbtn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></div>
+        </div>
+      </div>
+
+      <div class="chat">
+        <div class="divider">Today</div>
+
+        <div class="agent-msg">
+          <div class="msg-over">Researcher</div>
+          <div class="msg-body bodyfont">I found three robot vacuums in your budget. I&rsquo;ve asked the Builder to pull live prices and specs before we shortlist.</div>
+        </div>
+
+        <div class="trace">
+          <div class="trace-head">
+            <div class="grow">
+              <div class="trace-over">Builder &middot; working</div>
+              <div class="trace-title bodyfont">Gathering live prices &amp; specs</div>
+              <div class="trace-meta">2 of 3 &middot; started 1m ago</div>
+            </div>
+            <div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></div>
+          </div>
+        </div>
+
+        <div class="artifact">
+          <div class="art-over">Artifact</div>
+          <div class="art-title">Shortlist</div>
+          <div class="art-item"><div><div class="name bodyfont">Shark RV1000</div><div class="sub">2-yr warranty &middot; 60 min</div></div><div class="price">&pound;429</div></div>
+          <div class="art-item"><div><div class="name bodyfont">Roomba i5</div><div class="sub">1-yr warranty &middot; 75 min</div></div><div class="price">&pound;399</div></div>
+          <div class="art-item"><div><div class="name bodyfont">Eufy X10</div><div class="sub">2-yr warranty &middot; 90 min</div></div><div class="price">&pound;459</div></div>
+        </div>
+
+        <div class="user-msg"><div class="bubble bodyfont">Can you check the warranty and returns policy too?</div></div>
+
+        <div class="agent-msg">
+          <div class="msg-over">Researcher</div>
+          <div class="msg-body bodyfont">Done &mdash; two offer a 2-year warranty. Here&rsquo;s my recommendation.</div>
+        </div>
+
+        <div class="approval">
+          <div class="app-title">Order the Shark RV1000?</div>
+          <div class="app-meta">&pound;429 &middot; delivers Thursday</div>
+          <div class="actions">
+            <span class="btn btn-primary">Approve</span>
+            <span class="btn btn-ghost">Edit</span>
+            <span class="btn btn-danger">Reject</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer">
+        <div class="cicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg></div>
+        <div class="input bodyfont">Message&hellip;</div>
+        <div class="cicon send"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2"/></svg></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
