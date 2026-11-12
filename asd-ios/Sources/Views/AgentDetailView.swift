@@ -1,24 +1,26 @@
 import SwiftUI
 
 struct AgentDetailView: View {
-    let agent: Agent
+    let agent: API.Agent
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 Text(agent.name).font(.serifTitle(34))
-                Text(agent.desc).font(.text(14.5)).foregroundColor(.text2).padding(.top, 6)
+                Text(agent.description).font(.text(14.5)).foregroundColor(.text2).padding(.top, 6)
 
                 HStack(spacing: 6) {
-                    Circle().fill(Color.success).frame(width: 7, height: 7)
-                    Text("Active").font(.label(10)).tracking(1.2).textCase(.uppercase).foregroundColor(.success)
+                    Circle().fill(agent.status == .active ? Color.success : Color.text3).frame(width: 7, height: 7)
+                    Text(agent.status == .active ? "Active" : "Paused")
+                        .font(.label(10)).tracking(1.2).textCase(.uppercase)
+                        .foregroundColor(agent.status == .active ? .success : .text3)
                 }
                 .padding(.top, 10)
 
                 SectionLabel(text: "Capabilities")
                 HStack(spacing: 6) {
-                    ForEach(agent.caps, id: \.self) { c in
-                        Text(c).font(.label(9)).tracking(1.2).textCase(.uppercase)
+                    ForEach(agent.capabilities, id: \.self) { capability in
+                        Text(capability).font(.label(9)).tracking(1.2).textCase(.uppercase)
                             .padding(.horizontal, 10).padding(.vertical, 5)
                             .background(Color.surface2).foregroundColor(.text2)
                             .clipShape(Capsule())
@@ -26,16 +28,17 @@ struct AgentDetailView: View {
                 }
 
                 SectionLabel(text: "Connected")
-                connRow("GitHub", "read & write repositories")
-                connRow("AWS", "deploy · us-east-1")
-                connRow("Analytics DB", "read-only")
+                if agent.connections.isEmpty {
+                    Text("No connections — requested only when a task needs one.")
+                        .font(.label(11)).foregroundColor(.text3).padding(.top, 4)
+                } else {
+                    ForEach(agent.connections) { connection in
+                        connRow(connection.service, connection.scope)
+                    }
+                }
 
                 SectionLabel(text: "Delegation")
-                detailRow("Called by", "Researcher · Planner")
-
-                SectionLabel(text: "Recent sessions")
-                detailRow("Build dashboard", "Vacuum research · 2m")
-                detailRow("Deploy staging", "Project design · 1h")
+                detailRow("Called by", "Lead agents in shared sessions")
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 20)

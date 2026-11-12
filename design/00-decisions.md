@@ -53,3 +53,48 @@ See `02-screens.md` for the screen map and per-screen decisions.
 - A connection is requested (and must be approved) only when a task needs it —
   e.g. "Builder needs GitHub to push the repo." A todo list needs nothing.
 - Managed in Settings → Connections (grant / revoke per service).
+
+## Backend / API
+
+- **Transport:** Hybrid — REST (JSON) for CRUD + **one** WebSocket for the three
+  realtime streams (chat deltas, approval transitions, job status). GraphQL is
+  *reserved* for a later AppSync migration, not adopted now.
+- **Hosting target:** AWS Free Tier — Cognito · API Gateway (REST + WebSocket) ·
+  Lambda · DynamoDB · S3 · SQS/Step Functions · APNs + ActivityKit.
+- **Contract:** `design/03-api.md` — data shapes + REST endpoints + WS events.
+  The single source of truth for the mock server and both clients.
+- **Client realtime surfacing:** cancellable streams. iOS `AsyncStream` (from
+  `URLSessionWebSocketTask`) consumed via `.task`; web a typed socket emitter
+  wrapped in a `useRealtime` hook. The client stays a pure transport — no UI
+  state inside it.
+- **Client shape:** one `APIClient` (REST CRUD) + one `RealtimeClient` (WS),
+  identical method names + event types on both platforms. Config: `baseURL` +
+  token provider. `design/03-api.md` §4–5 is the contract both implement.
+- **Server:** no throwaway mock — a production **NestJS + TypeScript** service in
+  `asd-server/`. REST + native WebSocket gateway, `class-validator` DTOs, JWT auth
+  (Cognito-swappable), Prisma (SQLite now → Postgres/DynamoDB later), in-process
+  job scheduler + pluggable agent engine (deterministic now, real LLM later).
+  Runs locally end-to-end; AWS is a deployment + adapter swap, not a rewrite.
+- **Dev auth:** clients auto-login as `alex@asd.app` (local JWT) on boot until
+  Cognito is wired. Token kept in `localStorage` (web) / `TokenStore` (iOS).
+- **Web wiring:** `asd-web` reads everything from the API (no seed data) — a
+  single `ApiProvider` (`src/store.tsx`) holds sessions/agents/jobs/approvals,
+  keeps them live via a global WS subscription + a 4s polling fallback, and
+  `src/hooks.ts` streams per-session chat. Jobs tick every 1.2s (increment
+  `1/(steps·6)`), so progress/steps/logs update live.
+- **iOS wiring:** `asd-ios` mirrors the web — an `@MainActor AppStore`
+  (`ObservableObject`, `Sources/App/AppStore.swift`) bootstraps auth + lists and
+  keeps them live (global WS + 4s poll); `SessionDetailView` streams chat via a
+  `.task { for await e in client.realtime.events(.session, id:) }` loop (the
+  `AsyncStream` auto-unsubscribes on cancel). Seed `Models.swift` is removed;
+  views consume `API.*` contract models directly.
+- **LLM engine:** provider-agnostic, **user-selectable** — `LLM_PROVIDER`
+  (`openai` | `anthropic` | `deepseek` | `openrouter` | `openai-compatible`) +
+  `LLM_API_KEY` / `LLM_MODEL` / `LLM_BASE_URL`. One structured call per turn
+  (`{ reply, trace[], approval? }`), streamed word-by-word as `message.delta`;
+  **deterministic fallback** when no key is set. True multi-agent orchestration
+  is deferred until real sub-agents exist. Contract: `src/llm/`.
+- **Runtime settings:** LLM provider/model/key are **DB-backed** (`Setting`
+  table) with `.env` as defaults; `GET/PATCH /api/v1/settings`. The API key is
+  never returned (only `apiKeySet`). `LLMService` hot-reloads the provider on
+  change — no restart. Global (single-workspace) for now; per-user later.

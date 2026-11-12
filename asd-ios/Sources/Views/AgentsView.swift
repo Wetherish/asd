@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct AgentsView: View {
+    @EnvironmentObject private var store: AppStore
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     SectionLabel(text: "Your team")
-                    ForEach(Seed.agents) { a in
+                    ForEach(store.agents) { a in
                         NavigationLink { AgentDetailView(agent: a) } label: { AgentRow(agent: a) }
                             .buttonStyle(.plain)
                     }

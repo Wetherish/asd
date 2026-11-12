@@ -36,13 +36,14 @@ struct Pill: View {
     }
 }
 
-extension JobStatus {
+extension API.JobStatus {
     var color: Color {
         switch self {
         case .running: return .warning
         case .done: return .success
         case .failed: return .danger
         case .scheduled: return .text2
+        case .paused: return .text3
         }
     }
     var label: String { rawValue.capitalized }
@@ -70,16 +71,17 @@ struct AccentCard<Content: View>: View {
 // MARK: - Rows
 
 struct SessionRow: View {
-    let session: Session
+    let session: API.Session
+    let leadName: String
 
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(session.title).font(.serifTitle(18))
-                Text("\(session.lead) · \(session.meta)").font(.label(11)).foregroundColor(.text3)
+                Text("\(leadName) · \(Format.sessionMeta(session))").font(.label(11)).foregroundColor(.text3)
             }
             Spacer()
-            Text(session.time).font(.label(11)).foregroundColor(.text3)
+            Text(Format.relativeTime(session.updatedAt)).font(.label(11)).foregroundColor(.text3)
             Image(systemName: "chevron.right").font(.system(size: 13)).foregroundColor(.text3)
         }
         .cardStyle()
@@ -87,13 +89,14 @@ struct SessionRow: View {
 }
 
 struct JobRow: View {
-    let job: Job
+    let job: API.Job
+    let meta: String
 
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(job.title).font(.serifTitle(18))
-                Text("\(job.agent) · \(job.meta)").font(.label(11)).foregroundColor(.text3)
+                Text(meta).font(.label(11)).foregroundColor(.text3)
                 if job.status == .running {
                     ProgressView(value: job.progress).tint(.accent).padding(.top, 6)
                 }
@@ -106,16 +109,16 @@ struct JobRow: View {
 }
 
 struct AgentRow: View {
-    let agent: Agent
+    let agent: API.Agent
 
     var body: some View {
         HStack(alignment: .center) {
             VStack(alignment: .leading, spacing: 3) {
                 Text(agent.name).font(.serifTitle(18))
-                Text(agent.desc).font(.label(11)).foregroundColor(.text3)
+                Text(agent.description).font(.label(11)).foregroundColor(.text3)
                 HStack(spacing: 6) {
-                    ForEach(agent.caps, id: \.self) { c in
-                        Text(c)
+                    ForEach(agent.capabilities, id: \.self) { capability in
+                        Text(capability)
                             .font(.label(9))
                             .tracking(1.2)
                             .textCase(.uppercase)

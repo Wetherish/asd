@@ -1,0 +1,170 @@
+// Prisma schema — mirrors design/03-api.md data model.
+// PostgreSQL (RDS in production, docker-compose for local dev). Flexible
+// fields remain JSON-encoded strings (parsed in src/shared/mappers.ts) so the
+// data model is identical across providers.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid())
+  email         String          @unique
+  name          String
+  color         String          @default("#0F766E")
+  createdAt     DateTime        @default(now())
+  memberships   SessionMember[]
+  artifactShare ArtifactShare[]
+
+  // Per-user LLM config. llmApiKeyEncrypted is KMS ciphertext (base64), never plaintext.
+  llmProvider        String?
+  llmModel           String?
+  llmBaseUrl         String?
+  llmApiKeyEncrypted String?
+}
+
+model SessionMember {
+  sessionId String
+  userId    String
+  role      String  @default("owner")
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([sessionId, userId])
+}
+
+model Agent {
+  id           String       @id
+  name         String
+  description  String
+  capabilities String       @default("[]")
+  status       String       @default("active")
+  connections  Connection[]
+  createdAt    DateTime     @default(now())
+}
+
+model Connection {
+  id        String    @id @default(cuid())
+  agentId   String
+  service   String
+  scope     String
+  status    String
+  grantedAt DateTime?
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id          String          @id
+  title       String
+  leadAgentId String
+  archived    Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+  members     SessionMember[]
+  messages    Message[]
+  artifacts   Artifact[]
+}
+
+model Message {
+  id        String       @id @default(cuid())
+  sessionId String
+  role      String
+  authorId  String
+  body      String       @default("")
+  status    String       @default("complete")
+  artifacts String?      // JSON-encoded ArtifactRef[]
+  createdAt DateTime     @default(now())
+  session   Session      @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  trace     TraceEntry[]
+  approval  Approval?
+}
+
+model TraceEntry {
+  id        String   @id @default(cuid())
+  messageId String
+  agentId   String
+  title     String
+  status    String   @default("queued")
+  progress  Float?
+  detail    String?
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model Approval {
+  id        String   @id @default(cuid())
+  sessionId String
+  messageId String   @unique
+  title     String
+  meta      String
+  kind      String   @default("action")
+  status    String   @default("pending")
+  actions   String   @default("[\"approve\",\"edit\",\"reject\"]")
+  createdAt DateTime @default(now())
+  decidedBy String?
+  decidedAt DateTime?
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+}
+
+model Artifact {
+  id        String          @id @default(cuid())
+  sessionId String
+  kind      String
+  name      String
+  authorId  String
+  content   String          // JSON-encoded ArtifactContent
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  session   Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  shares    ArtifactShare[]
+}
+
+model ArtifactShare {
+  artifactId String
+  userId     String
+  role       String   @default("viewer")
+  artifact   Artifact @relation(fields: [artifactId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([artifactId, userId])
+}
+
+model Job {
+  id           String     @id
+  title        String
+  agentId      String
+  status       String     @default("scheduled")
+  progress     Float      @default(0)
+  createdAt    DateTime   @default(now())
+  scheduledFor DateTime?
+  recurring    String?
+  steps        JobStep[]
+  logs         LogEntry[]
+}
+
+model JobStep {
+  id     String  @id @default(cuid())
+  jobId  String
+  title  String
+  status String  @default("queued")
+  detail String?
+  job    Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model LogEntry {
+  id    String   @id @default(cuid())
+  jobId String
+  ts    DateTime @default(now())
+  level String
+  text  String
+  job   Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+}
+
+model Setting {
+  key   String @id
+  value String
+}

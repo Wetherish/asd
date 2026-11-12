@@ -1,0 +1,11 @@
+# Local Terraform state and plan files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+tfplan*
+
+# Crash logs
+crash.log
+crash.*.log

@@ -1,8 +1,10 @@
-import { agents } from "../data";
+import { useApp } from "../store";
 import { StatusBar } from "../components";
 import { Chevron } from "../icons";
 
 export default function Agents({ onOpen }: { onOpen: (id: string) => void }) {
+  const { agents } = useApp();
+
   return (
     <>
       <StatusBar />
@@ -21,9 +23,9 @@ export default function Agents({ onOpen }: { onOpen: (id: string) => void }) {
           >
             <span className="grow">
               <span className="row-title">{a.name}</span>
-              <span className="row-meta">{a.desc}</span>
+              <span className="row-meta">{a.description}</span>
               <span style={{ display: "flex", gap: 6, marginTop: 9 }}>
-                {a.caps.map((c) => (
+                {a.capabilities.map((c) => (
                   <span key={c} className="pill pill-sched">
                     {c}
                   </span>

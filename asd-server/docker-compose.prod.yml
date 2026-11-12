@@ -1,0 +1,12 @@
+# Production compose for a single EC2 host. The database is RDS (or any
+# external Postgres) — this file runs only the app container. The CI pipeline
+# updates IMAGE_TAG in .env, then `docker compose pull && up -d`.
+services:
+  asd-server:
+    image: "${ECR_REPOSITORY}:${IMAGE_TAG:-latest}"
+    init: true
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    env_file:
+      - .env

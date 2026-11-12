@@ -1,6 +1,10 @@
-import { approval, jobs, sessions } from "../data";
+import { useState } from "react";
+import { useApp } from "../store";
+import { agentName, jobMeta, relativeTime } from "../format";
 import { Gear, Mic, Moon, Sun } from "../icons";
 import { StatusBar } from "../components";
+import { api } from "../api";
+import TalkOverlay from "./TalkOverlay";
 
 type Props = {
   onOpenSession: (id: string) => void;
@@ -10,8 +14,18 @@ type Props = {
 };
 
 export default function Home({ onOpenSession, onSettings, theme, onToggleTheme }: Props) {
+  const { me, sessions, jobs, approvals, agents, decideApproval, createSession } = useApp();
+  const [talkOpen, setTalkOpen] = useState(false);
   const recent = sessions.slice(0, 2);
-  const running = jobs.filter((j) => j.group === "running").slice(0, 2);
+  const running = jobs.filter((j) => j.status === "running").slice(0, 3);
+  const needsYou = approvals[0];
+
+  const handleTalkDone = async (transcript: string, leadAgentId?: string) => {
+    const title = transcript.split(/\s+/).slice(0, 6).join(" ") || "New session";
+    const session = await createSession(title, leadAgentId || agents[0]?.id || "researcher");
+    await api.sendMessage(session.id, transcript);
+    onOpenSession(session.id);
+  };
 
   return (
     <>
@@ -20,7 +34,7 @@ export default function Home({ onOpenSession, onSettings, theme, onToggleTheme }
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
             <div className="overline">Good morning</div>
-            <div className="hero">Alex</div>
+            <div className="hero">{me?.name ?? "Alex"}</div>
           </div>
           <div style={{ display: "flex", gap: 2 }}>
             <button className="iconbtn" onClick={onToggleTheme} aria-label="Toggle theme">
@@ -32,21 +46,34 @@ export default function Home({ onOpenSession, onSettings, theme, onToggleTheme }
           </div>
         </div>
 
-        <button className="talk">
+        <button className="talk" onClick={() => setTalkOpen(true)}>
           <Mic />Talk
         </button>
 
         <div className="section-label">Needs you</div>
-        <div className="approval" style={{ marginTop: 0 }}>
-          <div className="app-title">{approval.title}</div>
-          <div className="meta" style={{ marginTop: 3 }}>
-            {approval.meta}
+        {needsYou ? (
+          <div className="approval" style={{ marginTop: 0 }}>
+            <div className="app-title">{needsYou.title}</div>
+            <div className="meta" style={{ marginTop: 3 }}>
+              {needsYou.meta}
+            </div>
+            <div className="actions">
+              <button className="btn btn-primary" onClick={() => void decideApproval(needsYou.id, "approve")}>
+                Approve
+              </button>
+              <button className="btn btn-ghost" onClick={() => void decideApproval(needsYou.id, "edit")}>
+                Review
+              </button>
+              <button className="btn btn-danger" onClick={() => void decideApproval(needsYou.id, "reject")}>
+                Reject
+              </button>
+            </div>
           </div>
-          <div className="actions">
-            <button className="btn btn-primary">Approve</button>
-            <button className="btn btn-ghost">Review</button>
+        ) : (
+          <div className="meta" style={{ marginTop: 0 }}>
+            All caught up — nothing needs you right now.
           </div>
-        </div>
+        )}
 
         <div className="section-label">Recent</div>
         {recent.map((s) => (
@@ -59,26 +86,40 @@ export default function Home({ onOpenSession, onSettings, theme, onToggleTheme }
             <span className="grow">
               <span className="row-title">{s.title}</span>
               <span className="row-meta">
-                {s.lead} · {s.meta}
+                {agentName(agents, s.leadAgentId)} · {s.members.length > 1 ? `Shared · ${s.members.length} people` : "Personal"}
               </span>
             </span>
-            <span className="meta">{s.time}</span>
+            <span className="meta">{relativeTime(s.updatedAt)}</span>
           </button>
         ))}
 
         <div className="section-label">Jobs</div>
-        {running.map((j) => (
-          <div className="row" key={j.id}>
-            <span className="grow">
-              <span className="row-title">{j.title}</span>
-              <span className="row-meta">
-                {j.agent} · {j.meta}
+        {running.length ? (
+          running.map((j) => (
+            <div className="row" key={j.id}>
+              <span className="grow">
+                <span className="row-title">{j.title}</span>
+                <span className="row-meta">{jobMeta(j, agents)}</span>
+                <span className="progress">
+                  <i style={{ width: `${Math.round(j.progress * 100)}%` }} />
+                </span>
               </span>
-            </span>
-            <span className={`pill pill-${j.status === "running" ? "run" : "ok"}`}>{j.status}</span>
-          </div>
-        ))}
+              <span className="pill pill-run">running</span>
+            </div>
+          ))
+        ) : (
+          <div className="meta">No running jobs.</div>
+        )}
       </div>
+
+      {talkOpen ? (
+        <TalkOverlay
+          mode="home"
+          agents={agents}
+          onClose={() => setTalkOpen(false)}
+          onDone={handleTalkDone}
+        />
+      ) : null}
     </>
   );
 }
