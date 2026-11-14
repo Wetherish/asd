@@ -25,6 +25,7 @@ export type Agent = {
   name: string;
   description: string;
   capabilities: string[];
+  tools: string[];
   status: AgentStatus;
   connections: Connection[];
 };
@@ -42,7 +43,7 @@ export type Session = {
 // ---- Chat ----
 export type MessageRole = "user" | "agent";
 export type MessageStatus = "streaming" | "complete" | "error";
-export type ArtifactKind = "table" | "doc" | "canvas" | "dashboard";
+export type ArtifactKind = "table" | "doc" | "canvas" | "dashboard" | "list" | "image" | "data" | "app";
 export type ArtifactRef = { id: string; kind: ArtifactKind; name: string };
 
 export type TraceStatus = "queued" | "working" | "done" | "failed";
@@ -94,11 +95,31 @@ export type CanvasNode = {
 };
 export type Widget = { id: string; type: string; data?: unknown };
 
+export type ListItem = { id: string; text: string; checked: boolean; group?: string };
+export type AppFile = { path: string; body: string; language: string };
+
 export type ArtifactContent =
   | { kind: "table"; columns: string[]; rows: string[][] }
   | { kind: "doc"; body: string }
   | { kind: "canvas"; nodes: CanvasNode[] }
-  | { kind: "dashboard"; widgets: Widget[] };
+  | { kind: "dashboard"; widgets: Widget[] }
+  | { kind: "list"; items: ListItem[] }
+  | { kind: "image"; mime: string; blobKey: string; url?: string; alt?: string }
+  | { kind: "data"; format: "csv" | "json"; blobKey: string; url?: string;
+      preview?: { columns: string[]; rows: string[][] } }
+  | { kind: "app"; entry: string; files: AppFile[]; blobKey?: string; url?: string };
+
+export type FileRef = { blobKey: string; name: string; mime: string; size: number; url?: string };
+
+export type ShareLink = {
+  id: string;
+  artifactId: string;
+  token: string;
+  passwordHash?: string;
+  expiresAt?: string;
+  revoked: boolean;
+  createdAt: string;
+};
 
 export type Artifact = {
   id: string;
@@ -167,6 +188,8 @@ export type RealtimeEvent =
   | { type: "message.delta"; data: { sessionId: string; messageId: string; delta: string } }
   | { type: "message.done"; data: { sessionId: string; messageId: string } }
   | { type: "message.error"; data: { sessionId: string; messageId: string; error: ApiErrorBody } }
+  | { type: "artifact.created"; data: { sessionId: string; artifact: Artifact } }
+  | { type: "artifact.updated"; data: { sessionId: string; artifact: Artifact } }
   | { type: "approval.created"; data: { approval: Approval } }
   | { type: "approval.updated"; data: { approval: Approval } }
   | { type: "job.updated"; data: { job: Job } }

@@ -87,6 +87,9 @@ function sessionIdOf(e: RealtimeEvent): string | undefined {
     case 'approval.created':
     case 'approval.updated':
       return e.data.approval.sessionId;
+    case 'artifact.created':
+    case 'artifact.updated':
+      return e.data.sessionId;
     case 'session.updated':
       return e.data.session.id;
     case 'presence':

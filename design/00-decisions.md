@@ -54,6 +54,25 @@ See `02-screens.md` for the screen map and per-screen decisions.
   e.g. "Builder needs GitHub to push the repo." A todo list needs nothing.
 - Managed in Settings → Connections (grant / revoke per service).
 
+## Tools & actions
+
+See `05-tools.md` for the full spec. Summary of decisions:
+
+- **Agents can *do* things**, not just chat, via a typed **Tool** registry.
+  `Agent.capabilities` stays human-readable; a new `Agent.tools: string[]` lists
+  executable tools (default empty).
+- **First three tools:** `create_list` (deterministic, in-process), `run_code`
+  (sandboxed JS), `build_app` (static app). `run_code`/`build_app` are
+  approval-gated.
+- **Sandbox:** code runs in a dedicated Node Lambda — no network egress, least
+  privilege, hard resource caps, ephemeral FS. Single runtime (JS) first;
+  Python/matplotlib later.
+- **New artifact kinds:** `list`, `image`, `data`, `app`. Blob kinds
+  (`image`/`data`/`app`) live in S3; inline kinds (`list`) stay JSON.
+- **Sharing:** password-protected `ShareLink` on artifacts (additive to the
+  existing member `share`), with public `GET /share/:token` read-only routes.
+- **Delivery order:** M1 lists + data + share links → M2 sandbox → M3 app builder.
+
 ## Backend / API
 
 - **Transport:** Hybrid — REST (JSON) for CRUD + **one** WebSocket for the three

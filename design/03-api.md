@@ -64,7 +64,8 @@ type Agent = {
   id: string;
   name: string;
   description: string;
-  capabilities: string[];
+  capabilities: string[];      // human-readable labels ("Web", "Summarise")
+  tools: string[];             // executable ToolId[] — what it can actually invoke
   status: "active" | "paused";
   connections: Connection[];
 };
@@ -141,7 +142,7 @@ type Approval = {
 ### Artifact
 
 ```ts
-type ArtifactKind = "table" | "doc" | "canvas" | "dashboard";
+type ArtifactKind = "table" | "doc" | "canvas" | "dashboard" | "list" | "image" | "data" | "app";
 
 type Artifact = {
   id: string;
@@ -159,10 +160,19 @@ type ArtifactContent =
   | { kind: "table"; columns: string[]; rows: string[][] }
   | { kind: "doc"; body: string }                       // markdown
   | { kind: "canvas"; nodes: CanvasNode[] }
-  | { kind: "dashboard"; widgets: Widget[] };
+  | { kind: "dashboard"; widgets: Widget[] }
+  | { kind: "list"; items: ListItem[] }
+  | { kind: "image"; mime: string; blobKey: string; url?: string; alt?: string }
+  | { kind: "data"; format: "csv" | "json"; blobKey: string; url?: string;
+      preview?: { columns: string[]; rows: string[][] } }
+  | { kind: "app"; entry: string; files: AppFile[]; blobKey?: string; url?: string };
 
 type CanvasNode = { id: string; type: "note" | "shape" | "text"; x: number; y: number; data: unknown };
 type Widget = { id: string; type: string; data: unknown };   // keep loose for now
+type ListItem = { id: string; text: string; checked: boolean; group?: string };
+type AppFile = { path: string; body: string; language: string };
+
+type FileRef = { blobKey: string; name: string; mime: string; size: number; url?: string };
 ```
 
 ### Job
@@ -198,6 +208,37 @@ type LogEntry = {
   ts: string;
   level: "info" | "warn" | "error";
   text: string;
+};
+```
+
+### ShareLink
+
+```ts
+type ShareLink = {
+  id: string;
+  artifactId: string;
+  token: string;            // 256-bit random, in the URL
+  passwordHash?: string;    // scrypt `salt:hash` — optional
+  expiresAt?: string;
+  revoked: boolean;
+  createdAt: string;
+};
+```
+
+### ToolInvocation
+
+```ts
+type ToolInvocation = {
+  id: string;
+  toolId: string;           // "run_code" | "create_list" | "build_app" | …
+  args: unknown;            // validated against the tool's inputSchema
+  status: "queued" | "running" | "done" | "failed" | "needs_approval";
+  result?: {
+    artifactRef?: ArtifactRef;
+    files?: FileRef[];
+    text?: string;
+    error?: string;
+  };
 };
 ```
 
@@ -247,6 +288,15 @@ type LogEntry = {
 | DELETE | `/artifacts/:id` | 204 |
 | POST | `/artifacts/:id/share` | `{ personIds, role? }` → `Artifact` |
 
+### Share links (public, password-protected)
+
+| Method | Path | Notes |
+|---|---|---|
+| POST | `/artifacts/:id/share-links` | `{ password?, expiresAt? }` → `{ id, url }` |
+| GET | `/share/:token` | `@Public()` — `{ needsPassword: true }` or the read-only artifact view |
+| POST | `/share/:token/unlock` | `@Public()` — `{ password }` → short-lived access token/cookie |
+| DELETE | `/artifacts/:id/share-links/:linkId` | revoke |
+
 ### Jobs
 
 | Method | Path | Notes |
@@ -279,6 +329,8 @@ multiple scopes.
 | `message.delta` | `{ sessionId, messageId, delta }` | streaming chat |
 | `message.done` | `{ sessionId, messageId }` | turn complete |
 | `message.error` | `{ sessionId, messageId, error }` | turn failed |
+| `artifact.created` | `{ sessionId, artifact }` | a tool produced an artifact |
+| `artifact.updated` | `{ sessionId, artifact }` | artifact edited / shared |
 | `approval.created` | `{ approval }` | new approval surfaced |
 | `approval.updated` | `{ approval }` | decided / edited |
 | `job.updated` | `{ job }` | progress, step, or status change |
@@ -312,6 +364,7 @@ When the WS drops (mobile backgrounding, network), clients fall back to polling:
 | WebSocket | API Gateway (WebSocket API) / AppSync → Lambda |
 | Auth | Cognito User Pools (JWT) |
 | Artifact blobs | S3 (presigned URLs) |
+| Sandbox code execution (`run_code`) | Lambda (container image, Node, no egress) |
 | Scheduled/recurring jobs | EventBridge / Step Functions |
 | Job queues | SQS |
 | Push + Live Activity | SNS → APNs + ActivityKit |

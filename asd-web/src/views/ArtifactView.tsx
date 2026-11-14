@@ -133,7 +133,7 @@ export default function ArtifactView({ artifact, members, onClose, onChanged }: 
   );
 }
 
-function ArtifactBody({
+export function ArtifactBody({
   artifact,
   editing,
   body,
@@ -204,6 +204,92 @@ function ArtifactBody({
     );
   }
 
+  if (content.kind === "list") {
+    if (!content.items.length) return <div className="meta">Empty list.</div>;
+    return (
+      <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+        {content.items.map((item) => (
+          <li
+            key={item.id}
+            style={{
+              display: "flex",
+              gap: 10,
+              alignItems: "center",
+              padding: "10px 0",
+              borderBottom: "1px solid var(--border-2)",
+            }}
+          >
+            <span
+              style={{
+                width: 18,
+                height: 18,
+                borderRadius: 6,
+                border: "2px solid var(--border-2)",
+                background: item.checked ? "var(--accent)" : "transparent",
+                flexShrink: 0,
+              }}
+            />
+            <span className="row-title">{item.text}</span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (content.kind === "image") {
+    return content.url ? <img src={content.url} alt={content.alt ?? "Plot"} style={{ maxWidth: "100%", borderRadius: 10 }} /> : <div className="meta">Image (not yet rendered).</div>;
+  }
+
+  if (content.kind === "data") {
+    if (content.preview?.columns.length) {
+      return (
+        <table className="art-table">
+          <thead>
+            <tr>
+              {content.preview.columns.map((c) => (
+                <th key={c}>{c}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {content.preview.rows.map((r, i) => (
+              <tr key={i}>
+                {r.map((cell, j) => (
+                  <td key={j}>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    }
+    return <div className="meta">Data file ({content.format}).</div>;
+  }
+
+  if (content.kind === "app") {
+    if (!content.url) return <div className="meta">App (not yet deployed).</div>;
+    return (
+      <div>
+        <iframe
+          src={content.url}
+          title={artifact.name}
+          style={{
+            width: "100%",
+            height: 480,
+            border: "1px solid var(--border-2)",
+            borderRadius: 10,
+            background: "#fff",
+          }}
+        />
+        <div style={{ marginTop: 8 }}>
+          <a className="linkbtn" href={content.url} target="_blank" rel="noreferrer">
+            Open app
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   if (!content.widgets.length) return <div className="meta">Empty dashboard.</div>;
   return (
     <div>
@@ -233,9 +319,38 @@ function ShareSheet({
   const [role, setRole] = useState<PersonRole>("viewer");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [linkPassword, setLinkPassword] = useState("");
+  const [link, setLink] = useState<string | null>(null);
+  const [linkBusy, setLinkBusy] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const toggle = (id: string) => setSelected((s) => ({ ...s, [id]: !s[id] }));
   const ids = Object.keys(selected).filter((id) => selected[id]);
+
+  const createLink = async () => {
+    setLinkBusy(true);
+    setLinkError(null);
+    try {
+      const res = await api.createShareLink(artifact.id, { password: linkPassword || undefined });
+      setLink(window.location.origin + res.url);
+    } catch (e) {
+      setLinkError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setLinkBusy(false);
+    }
+  };
+
+  const copyLink = async () => {
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // clipboard unavailable — leave the link visible for manual copy
+    }
+  };
 
   const share = async () => {
     if (!ids.length) return;
@@ -291,6 +406,39 @@ function ShareSheet({
             </button>
           ))}
         </div>
+
+        <div className="section-label" style={{ marginTop: 18 }}>
+          Link
+        </div>
+        <div style={{ display: "flex", gap: 8 }}>
+          <input
+            className="input"
+            type="password"
+            placeholder="Password (optional)"
+            value={linkPassword}
+            onChange={(e) => setLinkPassword(e.target.value)}
+          />
+          <button className="btn btn-ghost" onClick={() => void createLink()} disabled={linkBusy}>
+            {linkBusy ? "Creating…" : "Create link"}
+          </button>
+        </div>
+        {linkError ? (
+          <div className="meta" style={{ color: "var(--danger)", marginTop: 8 }}>
+            {linkError}
+          </div>
+        ) : null}
+        {link ? (
+          <div className="row" style={{ marginTop: 10 }}>
+            <span className="grow">
+              <span className="row-meta" style={{ wordBreak: "break-all" }}>
+                {link}
+              </span>
+            </span>
+            <button className="linkbtn" onClick={() => void copyLink()}>
+              {copied ? "Copied" : "Copy"}
+            </button>
+          </div>
+        ) : null}
 
         {error ? (
           <div className="meta" style={{ color: "var(--danger)", marginTop: 10 }}>

@@ -127,8 +127,12 @@ struct ArtifactDetailView: View {
             canvas
         case .dashboard:
             dashboard
+        case .list:
+            list
         case nil:
             Text("Loading…").font(.label(11)).foregroundColor(.text3)
+        default:
+            Text("Preview coming soon").font(.label(11)).foregroundColor(.text3)
         }
     }
 
@@ -195,6 +199,24 @@ struct ArtifactDetailView: View {
                         Spacer()
                     }
                     .cardStyle()
+                }
+            }
+        )
+    }
+
+    private var list: some View {
+        let items = artifact?.content.items ?? []
+        if items.isEmpty {
+            return AnyView(Text("Empty list.").font(.label(11)).foregroundColor(.text3))
+        }
+        return AnyView(
+            VStack(alignment: .leading, spacing: 10) {
+                ForEach(items) { item in
+                    HStack(spacing: 10) {
+                        Image(systemName: item.checked ? "checkmark.square.fill" : "square")
+                            .foregroundColor(item.checked ? .accent : .text3)
+                        Text(item.text).font(.text(15))
+                    }
                 }
             }
         )

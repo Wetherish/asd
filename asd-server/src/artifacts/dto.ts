@@ -1,7 +1,7 @@
 import { IsArray, IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateArtifactDto {
-  @IsIn(['table', 'doc', 'canvas', 'dashboard'])
+  @IsIn(['table', 'doc', 'canvas', 'dashboard', 'list', 'data'])
   kind!: string;
 
   @IsString()

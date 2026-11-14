@@ -10,3 +10,12 @@ services:
       - "4000:4000"
     env_file:
       - .env
+    environment:
+      # Blob artifacts (image/data/app) live on a persistent volume so they
+      # survive container recreation on every redeploy.
+      BLOB_DIR: /data/blobs
+    volumes:
+      - appdata:/data
+
+volumes:
+  appdata:

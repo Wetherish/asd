@@ -44,6 +44,7 @@ export function toAgent(a: any): Agent {
     name: a.name,
     description: a.description,
     capabilities: parseJson<string[]>(a.capabilities, []),
+    tools: parseJson<string[]>(a.tools, []),
     status: a.status as Agent['status'],
     connections: (a.connections ?? []).map(
       (c: any): Connection => ({

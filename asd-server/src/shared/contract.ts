@@ -16,7 +16,8 @@ export type Agent = {
   id: string;
   name: string;
   description: string;
-  capabilities: string[];
+  capabilities: string[];   // human-readable labels ("Web", "Summarise")
+  tools: string[];          // executable ToolId[] — what it can actually invoke
   status: 'active' | 'paused';
   connections: Connection[];
 };
@@ -31,7 +32,7 @@ export type Session = {
   archived: boolean;
 };
 
-export type ArtifactKind = 'table' | 'doc' | 'canvas' | 'dashboard';
+export type ArtifactKind = 'table' | 'doc' | 'canvas' | 'dashboard' | 'list' | 'image' | 'data' | 'app';
 export type ArtifactRef = { id: string; kind: ArtifactKind; name: string };
 
 export type TraceEntry = {
@@ -70,11 +71,21 @@ export type Message = {
   approval?: Approval;
 };
 
+export type ListItem = { id: string; text: string; checked: boolean; group?: string };
+export type AppFile = { path: string; body: string; language: string };
+
 export type ArtifactContent =
   | { kind: 'table'; columns: string[]; rows: string[][] }
   | { kind: 'doc'; body: string }
   | { kind: 'canvas'; nodes: unknown[] }
-  | { kind: 'dashboard'; widgets: unknown[] };
+  | { kind: 'dashboard'; widgets: unknown[] }
+  | { kind: 'list'; items: ListItem[] }
+  | { kind: 'image'; mime: string; blobKey: string; url?: string; alt?: string }
+  | { kind: 'data'; format: 'csv' | 'json'; blobKey: string; url?: string;
+      preview?: { columns: string[]; rows: string[][] } }
+  | { kind: 'app'; entry: string; files: AppFile[]; blobKey?: string; url?: string };
+
+export type FileRef = { blobKey: string; name: string; mime: string; size: number; url?: string };
 
 export type Artifact = {
   id: string;
@@ -86,6 +97,41 @@ export type Artifact = {
   updatedAt: string;
   content: ArtifactContent;
   sharedWith: Person[];
+};
+
+export type ShareLink = {
+  id: string;
+  artifactId: string;
+  token: string;            // 256-bit random, in the URL
+  passwordHash?: string;    // scrypt `salt:hash`
+  expiresAt?: string;
+  revoked: boolean;
+  createdAt: string;
+};
+
+export type ToolId = 'run_code' | 'create_list' | 'build_app' | 'fetch_url';
+
+export type Tool = {
+  id: ToolId;
+  name: string;
+  description: string;
+  inputSchema: object;
+  produces: ArtifactKind[];
+  needsApproval: boolean;
+  needsConnection?: string;
+};
+
+export type ToolInvocation = {
+  id: string;
+  toolId: ToolId;
+  args: unknown;
+  status: 'queued' | 'running' | 'done' | 'failed' | 'needs_approval';
+  result?: {
+    artifactRef?: ArtifactRef;
+    files?: FileRef[];
+    text?: string;
+    error?: string;
+  };
 };
 
 export type JobStatus = 'running' | 'scheduled' | 'done' | 'failed' | 'paused';
@@ -112,6 +158,8 @@ export type RealtimeEvent =
   | { type: 'message.delta'; data: { sessionId: string; messageId: string; delta: string } }
   | { type: 'message.done'; data: { sessionId: string; messageId: string } }
   | { type: 'message.error'; data: { sessionId: string; messageId: string; error: { code: string; message: string } } }
+  | { type: 'artifact.created'; data: { sessionId: string; artifact: Artifact } }
+  | { type: 'artifact.updated'; data: { sessionId: string; artifact: Artifact } }
   | { type: 'approval.created'; data: { approval: Approval } }
   | { type: 'approval.updated'; data: { approval: Approval } }
   | { type: 'job.updated'; data: { job: Job } }
@@ -130,6 +178,9 @@ export function matchesEvent(scope: Scope, id: string, e: RealtimeEvent): boolea
         case 'approval.created':
         case 'approval.updated':
           return e.data.approval.sessionId === id;
+        case 'artifact.created':
+        case 'artifact.updated':
+          return e.data.sessionId === id;
         case 'session.updated':
           return e.data.session.id === id;
         case 'presence':

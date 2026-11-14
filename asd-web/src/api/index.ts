@@ -1,6 +1,7 @@
 export * from "./types";
 export { createHttp, type HttpClientOptions, type RequestOptions } from "./http";
 export { RealtimeClient, type RealtimeClientOptions } from "./ws";
+export { useRealtime } from "./useRealtime";
 export {
   ApiClient,
   type ApiConfig,

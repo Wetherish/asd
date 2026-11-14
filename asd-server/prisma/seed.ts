@@ -22,16 +22,16 @@ async function main(): Promise<void> {
 
   // Agents
   const agents = [
-    { id: 'researcher', name: 'Researcher', description: 'Researches and compares options', capabilities: ['Web', 'Summarise'] },
-    { id: 'builder', name: 'Builder', description: 'Builds and deploys dashboards', capabilities: ['Code', 'Deploy'] },
-    { id: 'planner', name: 'Planner', description: 'Manages your calendar and tasks', capabilities: ['Calendar', 'Reminders'] },
-    { id: 'reviewer', name: 'Reviewer', description: 'Reads and summarizes documents', capabilities: ['Docs', 'Contracts'] },
+    { id: 'researcher', name: 'Researcher', description: 'Researches and compares options', capabilities: ['Web', 'Summarise'], tools: ['create_list', 'run_code', 'build_app'] },
+    { id: 'builder', name: 'Builder', description: 'Builds and deploys dashboards', capabilities: ['Code', 'Deploy'], tools: ['create_list', 'run_code', 'build_app'] },
+    { id: 'planner', name: 'Planner', description: 'Manages your calendar and tasks', capabilities: ['Calendar', 'Reminders'], tools: ['create_list', 'run_code', 'build_app'] },
+    { id: 'reviewer', name: 'Reviewer', description: 'Reads and summarizes documents', capabilities: ['Docs', 'Contracts'], tools: ['create_list', 'run_code', 'build_app'] },
   ];
   for (const a of agents) {
     await prisma.agent.upsert({
       where: { id: a.id },
-      update: { name: a.name, description: a.description, capabilities: JSON.stringify(a.capabilities) },
-      create: { id: a.id, name: a.name, description: a.description, capabilities: JSON.stringify(a.capabilities) },
+      update: { name: a.name, description: a.description, capabilities: JSON.stringify(a.capabilities), tools: JSON.stringify(a.tools) },
+      create: { id: a.id, name: a.name, description: a.description, capabilities: JSON.stringify(a.capabilities), tools: JSON.stringify(a.tools) },
     });
   }
 

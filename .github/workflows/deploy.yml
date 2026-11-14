@@ -60,6 +60,22 @@ jobs:
           script: |
             cd /opt/asd
             sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${IMAGE_TAG}|" .env
+            grep -q '^BLOB_DIR=' .env || echo 'BLOB_DIR=/data/blobs' >> .env
+            cat > docker-compose.yml <<'COMPOSE'
+            services:
+              asd-server:
+                image: "${ECR_REPOSITORY}:${IMAGE_TAG:-latest}"
+                init: true
+                restart: unless-stopped
+                ports:
+                  - "4000:4000"
+                env_file:
+                  - .env
+                volumes:
+                  - appdata:/data
+            volumes:
+              appdata:
+            COMPOSE
             aws ecr get-login-password --region "${AWS_REGION}" | docker login --username AWS --password-stdin "${ECR_REPOSITORY}"
             docker compose pull
             docker compose up -d --remove-orphans

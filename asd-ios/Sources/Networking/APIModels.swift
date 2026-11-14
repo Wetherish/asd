@@ -66,6 +66,7 @@ enum API {
         let name: String
         let description: String
         let capabilities: [String]
+        let tools: [String]
         let status: AgentStatus
         let connections: [Connection]
     }
@@ -84,7 +85,7 @@ enum API {
 
     enum MessageRole: String, Codable { case user, agent }
     enum MessageStatus: String, Codable { case streaming, complete, error }
-    enum ArtifactKind: String, Codable { case table, doc, canvas, dashboard }
+    enum ArtifactKind: String, Codable { case table, doc, canvas, dashboard, list, image, data, app }
 
     struct ArtifactRef: Codable, Hashable {
         let id: String
@@ -151,6 +152,24 @@ enum API {
         let data: JSONValue?
     }
 
+    struct ListItem: Codable, Hashable, Identifiable {
+        let id: String
+        let text: String
+        let checked: Bool
+        let group: String?
+    }
+
+    struct AppFile: Codable, Hashable {
+        let path: String
+        let body: String
+        let language: String
+    }
+
+    struct TablePreview: Codable, Hashable {
+        let columns: [String]
+        let rows: [[String]]
+    }
+
     /// Flattened mirror of the contract's `content` union — `kind` selects the
     /// populated fields; the others are `nil` (and omitted when encoded).
     struct ArtifactContent: Codable, Hashable {
@@ -160,6 +179,15 @@ enum API {
         let body: String?
         let nodes: [CanvasNode]?
         let widgets: [Widget]?
+        let items: [ListItem]? = nil
+        let mime: String? = nil
+        let blobKey: String? = nil
+        let url: String? = nil
+        let alt: String? = nil
+        let format: String? = nil
+        let preview: TablePreview? = nil
+        let entry: String? = nil
+        let files: [AppFile]? = nil
 
         static func empty(_ kind: ArtifactKind) -> ArtifactContent {
             switch kind {
@@ -167,6 +195,7 @@ enum API {
             case .doc: return .init(kind: .doc, columns: nil, rows: nil, body: "", nodes: nil, widgets: nil)
             case .canvas: return .init(kind: .canvas, columns: nil, rows: nil, body: nil, nodes: [], widgets: nil)
             case .dashboard: return .init(kind: .dashboard, columns: nil, rows: nil, body: nil, nodes: nil, widgets: [])
+            default: return .init(kind: kind, columns: nil, rows: nil, body: nil, nodes: nil, widgets: nil)
             }
         }
     }

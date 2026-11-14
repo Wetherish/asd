@@ -96,6 +96,10 @@ export class ArtifactsService {
         return { kind: 'doc', body: '' };
       case 'canvas':
         return { kind: 'canvas', nodes: [] };
+      case 'list':
+        return { kind: 'list', items: [] };
+      case 'data':
+        return { kind: 'data', format: 'csv', blobKey: '', preview: { columns: [], rows: [] } };
       default:
         return { kind: 'dashboard', widgets: [] };
     }

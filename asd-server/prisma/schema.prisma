@@ -43,6 +43,7 @@ model Agent {
   name         String
   description  String
   capabilities String       @default("[]")
+  tools        String       @default("[]") // JSON-encoded ToolId[] — executable tools
   status       String       @default("active")
   connections  Connection[]
   createdAt    DateTime     @default(now())
@@ -96,18 +97,19 @@ model TraceEntry {
 }
 
 model Approval {
-  id        String   @id @default(cuid())
-  sessionId String
-  messageId String   @unique
-  title     String
-  meta      String
-  kind      String   @default("action")
-  status    String   @default("pending")
-  actions   String   @default("[\"approve\",\"edit\",\"reject\"]")
-  createdAt DateTime @default(now())
-  decidedBy String?
-  decidedAt DateTime?
-  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  id          String   @id @default(cuid())
+  sessionId   String
+  messageId   String   @unique
+  title       String
+  meta        String
+  kind        String   @default("action")
+  status      String   @default("pending")
+  actions     String   @default("[\"approve\",\"edit\",\"reject\"]")
+  pendingTool String?  // JSON: { toolId, args } — deferred approval-gated tool
+  createdAt   DateTime @default(now())
+  decidedBy   String?
+  decidedAt   DateTime?
+  message     Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
 }
 
 model Artifact {
@@ -121,6 +123,18 @@ model Artifact {
   updatedAt DateTime        @updatedAt
   session   Session         @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   shares    ArtifactShare[]
+  shareLinks ShareLink[]
+}
+
+model ShareLink {
+  id           String   @id @default(cuid())
+  artifactId   String
+  token        String   @unique
+  passwordHash String?  // scrypt: `salt:hash` (hex)
+  expiresAt    DateTime?
+  revoked      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  artifact     Artifact @relation(fields: [artifactId], references: [id], onDelete: Cascade)
 }
 
 model ArtifactShare {

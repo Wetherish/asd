@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApp } from "../store";
 import { useMessages } from "../hooks";
-import { api } from "../api";
+import { api, useRealtime } from "../api";
 import { agentName, relativeTime } from "../format";
 import type { Agent, Approval, Artifact, ArtifactKind, Message, Session, TraceEntry } from "../api/types";
 import { StatusBar, TopBar, DefaultActions } from "../components";
@@ -43,6 +43,11 @@ export default function SessionDetail({ session, onBack }: { session: Session; o
     void loadArtifacts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.id]);
+
+  // Refresh the artifacts tab when a tool produces one (e.g. a deferred run).
+  useRealtime("session", session.id, (e) => {
+    if (e.type === "artifact.created" || e.type === "artifact.updated") void loadArtifacts();
+  });
 
   const openArtifact = async (id: string) => {
     let full = artifacts.find((a) => a.id === id);

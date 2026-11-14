@@ -41,6 +41,7 @@ LLM_BASE_URL=${llm_base_url}
 SEED_ON_START=${seed_on_start}
 ECR_REPOSITORY=${ecr_repository}
 IMAGE_TAG=latest
+BLOB_DIR=/data/blobs
 ENVEOF
 
 cat > /opt/asd/docker-compose.yml <<'COMPOSEEOF'
@@ -53,6 +54,11 @@ services:
       - "${app_port}:${app_port}"
     env_file:
       - .env
+    volumes:
+      - appdata:/data
+
+volumes:
+  appdata:
 COMPOSEEOF
 
 # --- First start -------------------------------------------------------------

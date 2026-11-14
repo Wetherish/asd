@@ -124,6 +124,21 @@ export class ApiClient {
     return this.request<Artifact>(`/artifacts/${id}/share`, { method: "POST", body: input });
   }
 
+  // ---- share links ----
+  createShareLink(id: string, input: { password?: string; expiresAt?: string }): Promise<{ id: string; token: string; url: string }> {
+    return this.request<{ id: string; token: string; url: string }>(`/artifacts/${id}/share-links`, { method: "POST", body: input });
+  }
+  deleteShareLink(artifactId: string, linkId: string): Promise<void> {
+    return this.request<void>(`/artifacts/${artifactId}/share-links/${linkId}`, { method: "DELETE" });
+  }
+  getShare(token: string, key?: string): Promise<{ needsPassword: boolean; artifact?: Artifact }> {
+    const q = key ? `?key=${encodeURIComponent(key)}` : "";
+    return this.request<{ needsPassword: boolean; artifact?: Artifact }>(`/share/${token}${q}`);
+  }
+  unlockShare(token: string, password: string): Promise<{ key: string }> {
+    return this.request<{ key: string }>(`/share/${token}/unlock`, { method: "POST", body: { password } });
+  }
+
   // ---- jobs ----
   jobs(): Promise<Job[]> {
     return this.request<Job[]>("/jobs");

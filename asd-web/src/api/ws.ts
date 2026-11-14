@@ -18,6 +18,9 @@ function matchesEvent(scope: Scope, id: string, e: RealtimeEvent): boolean {
         case "approval.created":
         case "approval.updated":
           return e.data.approval.sessionId === id;
+        case "artifact.created":
+        case "artifact.updated":
+          return e.data.sessionId === id;
         case "session.updated":
           return e.data.session.id === id;
         case "presence":

@@ -13,6 +13,10 @@ import { SessionsModule } from './sessions/sessions.module';
 import { MessagesModule } from './messages/messages.module';
 import { ApprovalsModule } from './approvals/approvals.module';
 import { ArtifactsModule } from './artifacts/artifacts.module';
+import { ShareLinksModule } from './share-links/share-links.module';
+import { ToolsModule } from './tools/tools.module';
+import { SandboxModule } from './sandbox/sandbox.module';
+import { BlobModule } from './blob/blob.module';
 import { JobsModule } from './jobs/jobs.module';
 import { JwtAuthGuard } from './common/jwt-auth.guard';
 
@@ -38,6 +42,10 @@ import { JwtAuthGuard } from './common/jwt-auth.guard';
     MessagesModule,
     ApprovalsModule,
     ArtifactsModule,
+    ShareLinksModule,
+    ToolsModule,
+    SandboxModule,
+    BlobModule,
     JobsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: JwtAuthGuard }],

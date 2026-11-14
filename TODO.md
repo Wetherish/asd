@@ -34,6 +34,19 @@ Still stubs:
 - [ ] **Replace the in-process scheduler** — jobs advance via a `setInterval` tick in `JobsService` (explicitly a placeholder). It's not durable (scheduled jobs are lost on restart) and won't work across multiple instances. Move to SQS / Step Functions.
 - [ ] **Job authorization** — jobs are global: any logged-in user can list/pause/cancel every job. Scope jobs to their creator (or a shared team) like sessions.
 
+## Tools & actions
+
+Designed in `design/05-tools.md`. Delivery order: M1 → M2 → M3.
+
+- [x] **M1 — lists + data + share links** — `create_list` tool, `list`/`data` artifact kinds, `ShareLink` model + `POST /artifacts/:id/share-links` + public `GET/POST /share/:token` routes (scrypt password), `Agent.tools` field. Backend + web done; iOS has `list` rendering but the share-link UI is still a follow-up.
+- [x] **Engine tool loop** — `EngineService` `Script` gained `tools`, invocations run through `ToolsService`, gated to the lead agent's `tools`, with `artifact.created` emitted. Approval-gated continuation (run on `approve`) is deferred to M2.
+- [x] **M2 — sandbox (local)** — `run_code` tool, `SandboxService` (node `vm` child process, timeout + output caps), `BlobService` (filesystem + `GET /files/:blobKey`), `image`/`data` outputs, and the approval-gated continuation (`Approval.pendingTool` run on `approve`).
+- [ ] **M2 — sandbox (production)** — swap `SandboxService` → Lambda and `BlobService` → S3 (presigned URLs), and add `terraform` (S3 bucket, Lambda container image, least-privilege IAM, no egress). Blocked on the AWS account.
+- [x] **M3 — app builder** — `build_app` tool (deterministic todo-app template → single self-contained `index.html`), `app` artifact kind (`entry`/`files`/`blobKey`/`url`), `.html` → `text/html` blob serving, and `<iframe>` rendering in the web artifact viewer + share page.
+- [ ] **M3 — app builder (production)** — swap static serving to AWS (S3 + CloudFront) behind `BlobService`, and add iOS `app` rendering.
+- [ ] **iOS share-link UI** — add link creation + password to the iOS `ShareArtifactSheet`, mirroring the web share sheet.
+- [ ] **Verify at runtime** — apply the schema (`prisma db push` + `prisma:seed`) against a running Postgres and smoke-test the grocery-list → share-link flow (blocked on the `.env`/schema SQLite-vs-Postgres mismatch + no local DB).
+
 ## Operational
 
 - [ ] **Provision the AWS stack + point iOS at it** — `terraform/terraform.tfstate` is currently empty (no EC2/RDS/Cognito). Run `terraform apply`, then set the iOS `host` constant (`AppStore.live()`) to the `app_url` output.
